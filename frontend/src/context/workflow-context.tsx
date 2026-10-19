@@ -15,11 +15,24 @@ import type { CreateWorkflowValues } from "@/schemas/workflow-schema";
 
 type WorkflowContextType = {
   workflows: Workflow[];
+
+  getWorkflowById: (id: string) => Workflow | undefined;
+
   addWorkflow: (data: CreateWorkflowValues) => void;
+
+  updateWorkflow: (
+    id: string,
+    data: CreateWorkflowValues
+  ) => boolean;
+
+  deleteWorkflow: (id: string) => boolean;
+
+  toggleWorkflowStatus: (id: string) => void;
 };
 
-const WorkflowContext =
-  createContext<WorkflowContextType | undefined>(undefined);
+const WorkflowContext = createContext<
+  WorkflowContextType | undefined
+>(undefined);
 
 export function WorkflowProvider({
   children,
@@ -29,6 +42,12 @@ export function WorkflowProvider({
   const [workflows, setWorkflows] =
     useState<Workflow[]>(mockWorkflows);
 
+  // Find a workflow using its ID
+  const getWorkflowById = (id: string) => {
+    return workflows.find((workflow) => workflow.id === id);
+  };
+
+  // Create a new workflow
   const addWorkflow = (data: CreateWorkflowValues) => {
     const newWorkflow: Workflow = {
       id: crypto.randomUUID(),
@@ -40,15 +59,75 @@ export function WorkflowProvider({
       createdAt: new Date().toISOString().slice(0, 10),
     };
 
-    setWorkflows((previousWorkflows) => [
+    setWorkflows((previous) => [
       newWorkflow,
-      ...previousWorkflows,
+      ...previous,
     ]);
+  };
+
+  // Update an existing workflow
+  const updateWorkflow = (
+    id: string,
+    data: CreateWorkflowValues
+  ): boolean => {
+    if (!getWorkflowById(id)) {
+      return false;
+    }
+
+    setWorkflows((previous) =>
+      previous.map((workflow) =>
+        workflow.id === id
+          ? {
+              ...workflow,
+              ...data,
+            }
+          : workflow
+      )
+    );
+
+    return true;
+  };
+
+  // Delete a workflow
+  const deleteWorkflow = (id: string): boolean => {
+    if (!getWorkflowById(id)) {
+      return false;
+    }
+
+    setWorkflows((previous) =>
+      previous.filter((workflow) => workflow.id !== id)
+    );
+
+    return true;
+  };
+
+  // Change Active <-> Inactive
+  const toggleWorkflowStatus = (id: string) => {
+    setWorkflows((previous) =>
+      previous.map((workflow) =>
+        workflow.id === id
+          ? {
+              ...workflow,
+              status:
+                workflow.status === "active"
+                  ? "inactive"
+                  : "active",
+            }
+          : workflow
+      )
+    );
   };
 
   return (
     <WorkflowContext.Provider
-      value={{ workflows, addWorkflow }}
+      value={{
+        workflows,
+        getWorkflowById,
+        addWorkflow,
+        updateWorkflow,
+        deleteWorkflow,
+        toggleWorkflowStatus,
+      }}
     >
       {children}
     </WorkflowContext.Provider>

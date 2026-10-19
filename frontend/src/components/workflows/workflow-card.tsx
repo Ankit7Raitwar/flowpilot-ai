@@ -1,9 +1,12 @@
 
+import Link from "next/link";
+
 import {
   Workflow as WorkflowIcon,
   CalendarDays,
   PlayCircle,
   Zap,
+  ArrowUpRight,
 } from "lucide-react";
 
 import type { Workflow } from "@/types/workflow";
@@ -23,10 +26,11 @@ export default function WorkflowCard({
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   });
 
   return (
-    <article className="rounded-xl border border-slate-800 bg-slate-900 p-5 transition-colors hover:border-slate-700">
+    <article className="rounded-xl border border-slate-800 bg-slate-900 p-5 transition hover:border-slate-700">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-4">
           <div className="rounded-xl bg-emerald-500/10 p-3">
@@ -73,6 +77,16 @@ export default function WorkflowCard({
           <CalendarDays size={15} />
           {formattedDate}
         </span>
+      </div>
+
+      <div className="mt-5 flex justify-end">
+        <Link
+          href={`/dashboard/workflows/${workflow.id}`}
+          className="inline-flex items-center gap-2 text-sm font-medium text-emerald-400 hover:text-emerald-300"
+        >
+          View Details
+          <ArrowUpRight size={17} />
+        </Link>
       </div>
     </article>
   );
