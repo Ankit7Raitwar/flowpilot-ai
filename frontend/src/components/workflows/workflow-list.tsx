@@ -7,17 +7,18 @@ import { SearchX } from "lucide-react";
 import WorkflowCard from "./workflow-card";
 import WorkflowFilters from "./workflow-filters";
 
-import { mockWorkflows } from "@/data/mock-workflows";
+import { useWorkflows } from "@/context/workflow-context";
 
 import type { WorkflowFilter } from "@/types/workflow";
 
 export default function WorkflowList() {
+  const { workflows } = useWorkflows();
+
   const [search, setSearch] = useState("");
   const [selectedFilter, setSelectedFilter] =
     useState<WorkflowFilter>("all");
 
-  // Filter workflows by name, description and status.
-  const filteredWorkflows = mockWorkflows.filter((workflow) => {
+  const filteredWorkflows = workflows.filter((workflow) => {
     const query = search.trim().toLowerCase();
 
     const matchesSearch =
@@ -31,9 +32,9 @@ export default function WorkflowList() {
     return matchesSearch && matchesStatus;
   });
 
-  const totalWorkflows = mockWorkflows.length;
+  const totalWorkflows = workflows.length;
 
-  const activeWorkflows = mockWorkflows.filter(
+  const activeWorkflows = workflows.filter(
     (workflow) => workflow.status === "active"
   ).length;
 
@@ -44,7 +45,6 @@ export default function WorkflowList() {
           <p className="text-sm text-slate-400">
             Total Workflows
           </p>
-
           <h2 className="mt-2 text-3xl font-bold">
             {totalWorkflows}
           </h2>
@@ -54,7 +54,6 @@ export default function WorkflowList() {
           <p className="text-sm text-slate-400">
             Active Workflows
           </p>
-
           <h2 className="mt-2 text-3xl font-bold text-emerald-400">
             {activeWorkflows}
           </h2>
@@ -68,7 +67,10 @@ export default function WorkflowList() {
         onFilterChange={setSelectedFilter}
       />
 
-      <div aria-live="polite" className="mb-4 text-sm text-slate-400">
+      <div
+        aria-live="polite"
+        className="mb-4 text-sm text-slate-400"
+      >
         Showing {filteredWorkflows.length} of {totalWorkflows} workflows
       </div>
 

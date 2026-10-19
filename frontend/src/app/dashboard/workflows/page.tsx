@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import PageHeading from "@/components/ui/page-heading";
@@ -13,13 +14,13 @@ export default function WorkflowsPage() {
           description="Search, filter and manage your automation workflows."
         />
 
-        <span
-          title="Workflow creation is coming in a future lesson"
-          className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-slate-700 px-5 py-3 text-sm font-semibold text-slate-300"
+        <Link
+          href="/dashboard/workflows/create"
+          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
         >
           <Plus size={18} />
-          Create Workflow — Soon
-        </span>
+          Create Workflow
+        </Link>
       </div>
 
       <WorkflowList />
